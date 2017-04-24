@@ -266,7 +266,7 @@ class AssortContentEvent
         }
         
         $images = null;
-        $update_assorts;
+        $update_assorts = null;
         for($i = 1; $i < self::ASSORT_COUNT + 1; $i++) {
             $assort = new Assort();
             $assort->name = $form[self::ASSORT_CONTENT_PREFIX . 'name' . $i]->getData();
@@ -279,17 +279,20 @@ class AssortContentEvent
         //dump($images);
         //dump($update_assorts);
         
-        foreach($update_assorts as $a){
-            //ファイルフォーマット検証
-            if(empty($a->image)) continue; //画像登録がなければスキップ
-            $mimeType = $a->image[0]->getMimeType();
-            if (0 !== strpos($mimeType, 'image')) {
-                throw new UnsupportedMediaTypeHttpException('ファイル形式が不正です');
+        if (!empty($update_assorts)) {
+            //画像をアップロード
+            foreach($update_assorts as $a){
+                //ファイルフォーマット検証
+                if(empty($a->image)) continue; //画像登録がなければスキップ
+                $mimeType = $a->image[0]->getMimeType();
+                if (0 !== strpos($mimeType, 'image')) {
+                    throw new UnsupportedMediaTypeHttpException('ファイル形式が不正です');
+                }
+                $filename = $a->image[0]->getClientOriginalName();
+                //$filename = date('mdHis') . '_' . $filename;
+                $a->image[0]->move($app['config']['image_save_realdir'], $filename);
+                //dump('uploaded! '. $filename);
             }
-            $filename = $a->image[0]->getClientOriginalName();
-            //$filename = date('mdHis') . '_' . $filename;
-            $a->image[0]->move($app['config']['image_save_realdir'], $filename);
-            //dump('uploaded! '. $filename);
         }
         
         $AssortContent = null;
@@ -301,7 +304,7 @@ class AssortContentEvent
         //dump($AssortProductContents);
         
         //if(!empty($AssortProductContents[0])) {
-        $AssortContents;
+        $AssortContents = null;
         for ($i = 0; $i < count($AssortProductContents); $i++) {
             $AssortContents[] = $AssortProductContents[$i]->getAssortContent();
         }
