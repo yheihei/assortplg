@@ -279,8 +279,8 @@ class AssortContentEvent
             if (0 !== strpos($mimeType, 'image')) {
                 throw new UnsupportedMediaTypeHttpException('ファイル形式が不正です');
             }
-            $orgname = $a->image[0]->getClientOriginalName();
-            $filename = date('mdHis') . '_' . $orgname;
+            $filename = $a->image[0]->getClientOriginalName();
+            //$filename = date('mdHis') . '_' . $filename;
             $a->image[0]->move($app['config']['image_save_realdir'], $filename);
             //dump('uploaded! '. $filename);
         }
