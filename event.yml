@@ -1,0 +1,7 @@
+admin.product.edit.initialize:
+    - [onAdminProductInit, NORMAL]
+admin.product.edit.complete:
+    - [onAdminProductEditComplete, NORMAL]
+# front product page event
+Product/detail.twig:
+    - [onRenderProductDetail, NORMAL]
