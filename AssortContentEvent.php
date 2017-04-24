@@ -72,15 +72,6 @@ class AssortContentEvent
             $AssortProductContents = $this->app['assort_content.repository.assort_product_content']
                 ->findBy(array('product_id' => $id));
            //dump($AssortProductContents);
-            if(!empty($AssortProductContents[0])) {
-                //$AssortContent = $AssortProductContents[0]->getAssortContent();
-                //$AssortContents = $this->app['assort_content.repository.assort_content']
-                //->findBy(array('assort_id' => $AssortProductContents[0]->getAssortId()));
-                //if(!empty($AssortContents[0])) {
-                //    $AssortContent = $AssortContents[0];
-                //}
-                //dump($AssortContent);
-            }
             
             for($i = 0; $i < count($AssortProductContents); $i++) {
                 $AssortContents[] = $this->app['assort_content.repository.assort_content']
