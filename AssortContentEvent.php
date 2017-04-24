@@ -381,32 +381,25 @@ class AssortContentEvent
         $id = $Product->getId();
         //dump($id);
         
-        $AssortContent = null;
         $AssortContents = null;
         $AssortProductContents = null;
 
         // IDの有無を念のためチェック
         if ($id) {
-            // 商品表示時はその商品IDにひもつくアソートIDの値を取得
+            // その商品IDにひもつくアソートIDを取得
             $AssortProductContents = $this->app['assort_content.repository.assort_product_content']
                 ->findBy(array('product_id' => $id));
-            //dump($AssortProductContents);
-            if(!empty($AssortProductContents[0])) {
-                //$AssortContent = $AssortProductContents[0]->getAssortContent();
-                $AssortContents = $this->app['assort_content.repository.assort_content']
-                ->findBy(array('assort_id' => $AssortProductContents[0]->getAssortId()));
-                
-               //dump($AssortContents);
-                
-                if(!empty($AssortContents[0])) {
-                    $AssortContent = $AssortContents[0];
-                }
-                //dump($AssortContent);
+           //dump($AssortProductContents);
+            
+            // その商品のアソート情報をすべて取得する
+            for($i = 0; $i < count($AssortProductContents); $i++) {
+                $AssortContents[] = $this->app['assort_content.repository.assort_content']
+                ->findBy(array('assort_id' => $AssortProductContents[$i]->getAssortId()))[0];
             }
         }
 
          // アソートが未登録の場合 アソートのデータを追加せずreturn
-        if (is_null($AssortContents)) {
+        if (empty($AssortContents)) {
             return;
         }
         
@@ -414,8 +407,10 @@ class AssortContentEvent
         $snipet = null;
         foreach ($AssortContents as $AssortContent) {
            //dump($AssortContent->getImageFileName());
+           $imageFileName = $AssortContent->getImageFileName();
+           if($imageFileName === null) $imageFileName = 'no_image_product.jpg';
             $snipet .= '<div class="hoge">
-            <img src="{{ app.config.image_save_urlpath }}/'. $AssortContent->getImageFileName() . '"/>
+            <img src="{{ app.config.image_save_urlpath }}/'. $imageFileName . '"/>
             </div>';
         }
         //$snipet = '<div class="hoge">
@@ -427,7 +422,7 @@ class AssortContentEvent
         $event->setSource($source);
         
         // twigパラメータにアソートコンテンツを追加
-        $parameters['AssortContent'] = $AssortContent;
+        $parameters['AssortContents'] = $AssortContents;
         $event->setParameters($parameters);
         
         return;
