@@ -63,6 +63,7 @@ class AssortContentEvent
         //dump($id);
         
         $AssortContent = null;
+        $AssortContents = null;
         $AssortProductContents = null;
 
         // IDの有無で登録か編集かを判断
@@ -70,22 +71,29 @@ class AssortContentEvent
             // 商品編集時はその商品IDにひもつくアソートIDの初期値を取得
             $AssortProductContents = $this->app['assort_content.repository.assort_product_content']
                 ->findBy(array('product_id' => $id));
-            //dump($AssortProductContents);
+           //dump($AssortProductContents);
             if(!empty($AssortProductContents[0])) {
                 //$AssortContent = $AssortProductContents[0]->getAssortContent();
-                $AssortContents = $this->app['assort_content.repository.assort_content']
-                ->findBy(array('assort_id' => $AssortProductContents[0]->getAssortId()));
-                if(!empty($AssortContents[0])) {
-                    $AssortContent = $AssortContents[0];
-                }
+                //$AssortContents = $this->app['assort_content.repository.assort_content']
+                //->findBy(array('assort_id' => $AssortProductContents[0]->getAssortId()));
+                //if(!empty($AssortContents[0])) {
+                //    $AssortContent = $AssortContents[0];
+                //}
                 //dump($AssortContent);
             }
+            
+            for($i = 0; $i < count($AssortProductContents); $i++) {
+                $AssortContents[] = $this->app['assort_content.repository.assort_content']
+                ->findBy(array('assort_id' => $AssortProductContents[$i]->getAssortId()))[0];
+            }
         }
+        
+       //dump($AssortContents);
 
          // 商品新規登録またはアソートが未登録の場合
-        if (is_null($AssortContent)) {
-            $AssortContent = new AssortContent();
-        }
+        //if (is_null($AssortContent)) {
+        //    $AssortContent = new AssortContent(null, null);
+        //}
 
         // フォームの追加
         /** @var FormInterface $builder */
@@ -229,8 +237,16 @@ class AssortContentEvent
 
         // 初期値を設定
         //dump($builder);
-        $builder->get(self::ASSORT_CONTENT_AREA_NAME1)->setData($AssortContent->getName());
-        $builder->get(self::ASSORT_IMAGE_AREA_NAME1)->setData($AssortContent->getImageFileName());
+        if(!empty($AssortContents)) {
+            //$builder->get(self::ASSORT_CONTENT_AREA_NAME1)->setData($AssortContent->getName());
+            //$builder->get(self::ASSORT_IMAGE_AREA_NAME1)->setData($AssortContent->getImageFileName());
+            for($i = 1; $i < count($AssortContents) + 1; $i++) {
+                $builder->get(self::ASSORT_CONTENT_PREFIX . 'name' . $i)->setData($AssortContents[$i-1]->getName());
+                $builder->get(self::ASSORT_CONTENT_PREFIX . 'image' . $i)->setData($AssortContents[$i-1]->getImageFileName());
+            }
+            
+        }
+            
     }
     
     /**
@@ -389,7 +405,7 @@ class AssortContentEvent
                 $AssortContents = $this->app['assort_content.repository.assort_content']
                 ->findBy(array('assort_id' => $AssortProductContents[0]->getAssortId()));
                 
-                dump($AssortContents);
+               //dump($AssortContents);
                 
                 if(!empty($AssortContents[0])) {
                     $AssortContent = $AssortContents[0];
@@ -406,7 +422,7 @@ class AssortContentEvent
         // twigコードにアソートコンテンツを挿入
         $snipet = null;
         foreach ($AssortContents as $AssortContent) {
-            dump($AssortContent->getImageFileName());
+           //dump($AssortContent->getImageFileName());
             $snipet .= '<div class="hoge">
             <img src="{{ app.config.image_save_urlpath }}/'. $AssortContent->getImageFileName() . '"/>
             </div>';
