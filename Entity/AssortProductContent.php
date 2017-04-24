@@ -24,6 +24,13 @@ class AssortProductContent extends \Eccube\Entity\AbstractEntity
      */
     private $AssortContent;
     
+    public function __construct($AssortContent, $assort_id, $Product, $product_id){
+        $this->AssortContent = $AssortContent;
+        $this->assort_id = $assort_id;
+        $this->Product = $Product;
+        $this->product_id = $product_id;
+    }
+    
     public function getProductId()
     {
         return $this->product_id;

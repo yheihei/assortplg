@@ -11,6 +11,12 @@ use Plugin\AssortContent\Entity\AssortProductContent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
+class Assort
+{
+    public $name;
+    public $image;
+}
+
 class AssortContentEvent
 {
     
@@ -242,8 +248,8 @@ class AssortContentEvent
         /** @var FormInterface $form */
         $form = $event->getArgument('form');
         //dump($form);
-        dump($form[self::ASSORT_CONTENT_AREA_NAME1]);
-        dump($form[self::ASSORT_IMAGE_AREA_NAME1]);
+        //dump($form[self::ASSORT_CONTENT_AREA_NAME1]);
+        //dump($form[self::ASSORT_IMAGE_AREA_NAME1]);
         
         // 商品IDが渡ってこない場合何もせず終了
         $id = $Product->getId();
@@ -252,84 +258,102 @@ class AssortContentEvent
             return;
         }
         
-        //dump($id);
+        $images = null;
+        $update_assorts;
+        for($i = 1; $i < self::ASSORT_COUNT + 1; $i++) {
+            $assort = new Assort();
+            $assort->name = $form[self::ASSORT_CONTENT_PREFIX . 'name' . $i]->getData();
+            if($assort->name === null) continue;
+            $assort->image = $form[self::ASSORT_CONTENT_PREFIX . 'image' . $i]->getData();
+            //dump($assort);
+            $update_assorts[] = $assort;
+            //$images[$i] = $form[self::ASSORT_CONTENT_PREFIX . 'image' . $i]->getData();
+        }
+        //dump($images);
+        //dump($update_assorts);
         
-        //アソート画像をアップロード
-        $filename = null;
-        $image = $form[self::ASSORT_IMAGE_AREA_NAME1]->getData();
-        //dump($image);
-        if(!empty($image)) {
-            $image1 = $image[0];
+        foreach($update_assorts as $a){
             //ファイルフォーマット検証
-            $mimeType = $image1->getMimeType();
+            if(empty($a->image)) continue; //画像登録がなければスキップ
+            $mimeType = $a->image[0]->getMimeType();
             if (0 !== strpos($mimeType, 'image')) {
                 throw new UnsupportedMediaTypeHttpException('ファイル形式が不正です');
             }
-            //dump($app['config']['root_dir']);
-            //dump($app['config']['image_temp_realdir']);
-            $orgname = $image1->getClientOriginalName();
+            $orgname = $a->image[0]->getClientOriginalName();
             $filename = date('mdHis') . '_' . $orgname;
-            $image1->move($app['config']['image_save_realdir'], $filename);
+            $a->image[0]->move($app['config']['image_save_realdir'], $filename);
+            //dump('uploaded! '. $filename);
         }
-        
-        $images = null;
-        for($i = 1; $i < self::ASSORT_COUNT +1; $i++) {
-            $images[$i] = $form[self::ASSORT_CONTENT_PREFIX . 'image' . $i]->getData();
-        }
-        dump($images);
-        /*
-        if (count($images) > 0) {
-            foreach ($images as $img) {
-                foreach ($img as $image) {
-                    //ファイルフォーマット検証
-                    $mimeType = $image->getMimeType();
-                    if (0 !== strpos($mimeType, 'image')) {
-                        throw new UnsupportedMediaTypeHttpException('ファイル形式が不正です');
-                    }
-
-                    $extension = $image->getClientOriginalExtension();
-                    $filename = date('mdHis') . uniqid('_') . '.' . $extension;
-                    $image->move($app['config']['image_temp_realdir'], $filename);
-                    $files[] = $filename;
-                }
-            }
-        }
-        */
         
         $AssortContent = null;
         $AssortProductContent = null;
         
         $AssortProductContents = $this->app['assort_content.repository.assort_product_content']
                 ->findBy(array('product_id' => $id));
+                
+        //dump($AssortProductContents);
         
-        if(!empty($AssortProductContents[0])) {
-            $AssortContent = $AssortProductContents[0]->getAssortContent();
-            $AssortProductContent = $AssortProductContents[0];
-            //dump($AssortContent);
-        } else {
-            $AssortContent = new AssortContent();
-            $AssortProductContent = new AssortProductContent();
+        //if(!empty($AssortProductContents[0])) {
+        $AssortContents;
+        for ($i = 0; $i < count($AssortProductContents); $i++) {
+            $AssortContents[] = $AssortProductContents[$i]->getAssortContent();
         }
-        //エンティティを更新
-        $AssortContent->setName($form[self::ASSORT_CONTENT_AREA_NAME1]->getData());
-        //画像の再アップがあればセット
-        if(!empty($filename)) $AssortContent->setImageFileName($filename);
-        // DB更新
-        $app['orm.em']->persist($AssortContent);
-        $app['orm.em']->flush($AssortContent);
+        //dump($AssortContents);
         
-        
-        //登録したアソートのID（DB登録後にしか取得できない）と商品IDを登録
-        //エンティティを更新
-        $AssortProductContent
-            ->setAssortContent($AssortContent)
-            ->setAssortId($AssortContent->getId())
-            ->setProductId($Product->getId())
-            ->setProduct($Product);
-        //dump($AssortProductContent);
-        // DB更新
-        $app['orm.em']->persist($AssortProductContent);
-        $app['orm.em']->flush($AssortProductContent);
+        $currentCount = count($AssortContents);
+        for($i = 0; $i < count($update_assorts); $i++) {
+            if (count($currentCount) > $i) {
+                $imgFileName = null;
+                if(!empty($update_assorts[$i]->image)) {
+                    $imgFileName = $update_assorts[$i]->image[0]->getClientOriginalName();
+                }
+                $AssortContents[$i]->setName($update_assorts[$i]->name);
+                $AssortContents[$i]->setImageFileName($imgFileName);
+                // DB更新
+                $app['orm.em']->persist($AssortContents[$i]);
+                $app['orm.em']->flush($AssortContents[$i]);
+                
+                //dump($AssortContents[$i]);
+                
+                $AssortProductContents[$i]
+                    ->setAssortContent($AssortContents[$i])
+                    ->setAssortId($AssortContents[$i]->getId())
+                    ->setProduct($Product)
+                    ->setProductId($Product->getId());
+                    
+                //dump($AssortProductContent);
+                // DB更新
+                $app['orm.em']->persist($AssortProductContents[$i]);
+                $app['orm.em']->flush($AssortProductContents[$i]);
+            } else {
+                //新規アソートの場合追加
+                //dump($update_assorts[$i]);
+                $imgFileName = null;
+                if(!empty($update_assorts[$i]->image)) {
+                    $imgFileName = $update_assorts[$i]->image[0]->getClientOriginalName();
+                }
+                $AssortContents[] = new AssortContent(
+                        $update_assorts[$i]->name,
+                        $imgFileName
+                    );
+                // DB更新
+                $app['orm.em']->persist($AssortContents[$i]);
+                $app['orm.em']->flush($AssortContents[$i]);
+                
+                //dump($AssortContents[$i]);
+                
+                $AssortProductContents[] = new AssortProductContent(
+                        $AssortContents[$i],
+                        $AssortContents[$i]->getId(),
+                        $Product,
+                        $Product->getId()
+                    );
+                //dump($AssortProductContents[$i]);
+                // DB更新
+                $app['orm.em']->persist($AssortProductContents[$i]);
+                $app['orm.em']->flush($AssortProductContents[$i]);
+            }
+        }
 
     }
     

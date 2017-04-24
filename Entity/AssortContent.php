@@ -9,6 +9,11 @@ class AssortContent extends \Eccube\Entity\AbstractEntity
     private $name;
     
     private $image_file_name;
+    
+    public function __construct($name,$image_file_name){
+        $this->name = $name;
+        $this->image_file_name = $image_file_name;
+    }
 
     public function getId()
     {
