@@ -308,11 +308,13 @@ class AssortContentEvent
         for ($i = 0; $i < count($AssortProductContents); $i++) {
             $AssortContents[] = $AssortProductContents[$i]->getAssortContent();
         }
-        //dump($AssortContents);
+        dump($AssortContents);
         
         $currentCount = count($AssortContents);
+        dump($currentCount);
+        dump($update_assorts);
         for($i = 0; $i < count($update_assorts); $i++) {
-            if (count($currentCount) > $i) {
+            if ($currentCount > $i) {
                 $imgFileName = null;
                 if(!empty($update_assorts[$i]->image)) {
                     $imgFileName = $update_assorts[$i]->image[0]->getClientOriginalName();
@@ -392,7 +394,7 @@ class AssortContentEvent
             // その商品IDにひもつくアソートIDを取得
             $AssortProductContents = $this->app['assort_content.repository.assort_product_content']
                 ->findBy(array('product_id' => $id));
-           //dump($AssortProductContents);
+            //dump($AssortProductContents);
             
             // その商品のアソート情報をすべて取得する
             for($i = 0; $i < count($AssortProductContents); $i++) {
@@ -419,7 +421,7 @@ class AssortContentEvent
         //$snipet = '<div class="hoge">
         //    <img src="{{ app.config.image_save_urlpath }}/{{ AssortContent.image_file_name | raw}}"/>
         //    </div>';
-        $search = '<div id="product_tag_box" class="product_tag">';
+        $search = '<p id="detail_description_box__item_range_code"';
         $replace = $snipet.$search;
         $source = str_replace($search, $replace, $event->getSource());
         $event->setSource($source);
