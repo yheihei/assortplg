@@ -377,6 +377,8 @@ class AssortContentEvent
     public function onRenderProductDetail(TemplateEvent $event)
     {
         //dump('商品画面レイアウト!twig表示！');
+        /** @var Application $app */
+        $app = $this->app;
         $parameters = $event->getParameters();
         
         //dump($parameters);
@@ -403,32 +405,132 @@ class AssortContentEvent
             }
         }
         
-        dump($AssortContents);
+        //dump($AssortContents);
         
          // アソートが未登録の場合 アソートのデータを追加せずreturn
         if (empty($AssortContents)) {
             return;
         }
         
-        // twigコードにアソートコンテンツを挿入
+        // twigコードにcssを挿入
         $snipet = null;
-        foreach ($AssortContents as $AssortContent) {
-           //dump($AssortContent->getImageFileName());
-           $imageFileName = $AssortContent->getImageFileName();
-           if($imageFileName === null) $imageFileName = 'no_image_product.jpg';
-            $snipet .= '<div class="hoge">
-            <img src="{{ app.config.image_save_urlpath }}/'. $imageFileName . '"/>
-            </div>';
-        }
+        $snipet .= '{% block stylesheet %}
+        <!-- for plg_assort theme Plugin-->
+<link rel="stylesheet" href="/eccube/html/plugin/AssortContent/assets/js/image-picker.css">
+<link rel="stylesheet" href="/eccube/html/plugin/AssortContent/assets/css/style.css">
+{% endblock %}
+';
+        //$snipet = $app['twig']->getLoader()->getSource('AssortContent/Resource/template/css.twig');
+        $search = '{% block javascript %}';
+        $replace = $snipet.$search;
+        $source = str_replace($search, $replace, $event->getSource());
+        //dump($source);
+        $event->setSource($source);
         
+        // twigコードに商品画像の上にアソートのオーバーレイエリアを挿入
+        /* 下記のような形式
+        $snipet = '<div id="selected_assort_image">'
+                    . '<div id="assort1" style="background-image:url('
+                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . '<div id="assort2" style="background-image:url('
+                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . '<div id="assort3" style="background-image:url('
+                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . '<div id="assort4" style="background-image:url('
+                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . '<div id="assort5" style="background-image:url('
+                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . '<div id="assort6" style="background-image:url('
+                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    .'</div>';
+        */
+        $snipet = '<div id="selected_assort_image">';
+        // デフォルトは一つ目のアソートを全て選択して表示
+        for($i = 0; $i < self::ASSORT_COUNT; $i++) {
+            /*
+            $snipet .= '<div id="assort' . $i+1 . '" style="background-image:url('
+                    . "'{{ app.config.image_save_urlpath }}/"
+                    . $AssortContents[0]->getImageFileName()
+                    . "');"
+                    . ' background-size: contain;'
+                    . ' "></div>';
+            */
+            $snipet .= '<div id="assort';
+            $snipet .= $i+1;
+            $snipet .= '" style="background-image:url(';
+            $snipet .= "'{{ app.config.image_save_urlpath }}/";
+            $snipet .= $AssortContents[0]->getImageFileName();
+            $snipet .= "');";
+            $snipet .= ' background-size: contain;';
+            $snipet .= ' "></div>';
+                    
+        }
+        $snipet .= '</div>';
+        $search = '<div id="detail_image_box__item--{{ loop.index }}"><img src="{{ app.config.image_save_urlpath }}/{{ ProductImage|no_image_product }}"/>';
+        $replace = $search.$snipet;
+        $source = str_replace($search, $replace, $event->getSource());
+        //dump($source);
+        $event->setSource($source);
+        
+        // twigコードにアソート選択のjavascriptを挿入
+        $snipet = null;
+        $snipet = '{% block plg_assort_javascript %}
+            <script src="/eccube/html/plugin/AssortContent/assets/js/image-picker.js" type="text/javascript"></script>
+            <script>
+                $(document).ready(function () {
+                    $(';
+        $snipet .=  '"select.image-picker").imagepicker({
+                        hide_select: true
+                    });
+                });
+            </script>
+            <script src="/eccube/html/plugin/AssortContent/assets/js/sync-image.js" type="text/javascript"></script>
+            {% endblock %}';
         $search = '<p id="detail_description_box__item_range_code"';
         $replace = $snipet.$search;
         $source = str_replace($search, $replace, $event->getSource());
         $event->setSource($source);
         
+        // twigコードにアソート選択エリアを挿入
+        $snipet = null;
+        for($i = 0; $i < self::ASSORT_COUNT; $i++) {
+            $snipet .= '<div class="assort_select_box">';
+            $snipet .= '<p class="assort_label">アソート';
+            $snipet .= $i+1;
+            $snipet .= '</p>';
+            $snipet .= '<select name="assort';
+            $snipet .= $i+1;
+            $snipet .= '" id="assort';
+            $snipet .= $i+1;
+            $snipet .= '" class="image-picker show-html">';
+            foreach ($AssortContents as $AssortContent) {
+                $snipet .= '<option data-img-src="{{ app.config.image_save_urlpath }}/';
+                $snipet .= $AssortContent->getImageFileName();
+                $snipet .= '" data-img-class="first" data-img-alt="';
+                $snipet .= $AssortContent->getName();
+                $snipet .= '" value="{{ app.config.image_save_urlpath }}/';
+                $snipet .= $AssortContent->getImageFileName();
+                $snipet .= '">';
+                $snipet .= $AssortContent->getName();
+                $snipet .= '</option>';
+            }
+            
+            $snipet .= '</select>';
+            $snipet .= '</div>';   
+        }
+        
+        $search = '<p id="detail_description_box__item_range_code"';
+        $replace = $snipet.$search;
+        //$search = '<form action="?" method="post" id="form1" name="form1">'; //カートのフォームの中に強引に入れ込む。
+        //$replace = $search.$snipet;
+        $source = str_replace($search, $replace, $event->getSource());
+        $event->setSource($source);
+        
         // twigパラメータにアソートコンテンツを追加
-        $parameters['AssortContents'] = $AssortContents;
-        $event->setParameters($parameters);
+        //$parameters['AssortContents'] = $AssortContents;
+        //$event->setParameters($parameters);
+        
+        
         
     }
 }
