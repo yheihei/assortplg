@@ -308,11 +308,11 @@ class AssortContentEvent
         for ($i = 0; $i < count($AssortProductContents); $i++) {
             $AssortContents[] = $AssortProductContents[$i]->getAssortContent();
         }
-        dump($AssortContents);
+       //dump($AssortContents);
         
         $currentCount = count($AssortContents);
-        dump($currentCount);
-        dump($update_assorts);
+       //dump($currentCount);
+       //dump($update_assorts);
         for($i = 0; $i < count($update_assorts); $i++) {
             if ($currentCount > $i) {
                 $imgFileName = null;
@@ -320,7 +320,7 @@ class AssortContentEvent
                     $imgFileName = $update_assorts[$i]->image[0]->getClientOriginalName();
                 }
                 $AssortContents[$i]->setName($update_assorts[$i]->name);
-                $AssortContents[$i]->setImageFileName($imgFileName);
+                if($imgFileName != null) $AssortContents[$i]->setImageFileName($imgFileName);
                 // DB更新
                 $app['orm.em']->persist($AssortContents[$i]);
                 $app['orm.em']->flush($AssortContents[$i]);
@@ -402,7 +402,9 @@ class AssortContentEvent
                 ->findBy(array('assort_id' => $AssortProductContents[$i]->getAssortId()))[0];
             }
         }
-
+        
+        dump($AssortContents);
+        
          // アソートが未登録の場合 アソートのデータを追加せずreturn
         if (empty($AssortContents)) {
             return;
@@ -418,9 +420,7 @@ class AssortContentEvent
             <img src="{{ app.config.image_save_urlpath }}/'. $imageFileName . '"/>
             </div>';
         }
-        //$snipet = '<div class="hoge">
-        //    <img src="{{ app.config.image_save_urlpath }}/{{ AssortContent.image_file_name | raw}}"/>
-        //    </div>';
+        
         $search = '<p id="detail_description_box__item_range_code"';
         $replace = $snipet.$search;
         $source = str_replace($search, $replace, $event->getSource());
@@ -430,34 +430,5 @@ class AssortContentEvent
         $parameters['AssortContents'] = $AssortContents;
         $event->setParameters($parameters);
         
-        return;
-        
-        
-        
-        
-        
-        // カテゴリIDがない場合、レンダリングしない
-        if (is_null($parameters['Category'])) {
-            return;
-        }
-
-        // 登録がない、もしくは空で登録されている場合、レンダリングをしない
-        $Category = $parameters['Category'];
-        $CategoryContent = $this->app['category_content.repository.category_content']
-            ->find($Category->getId());
-        if (is_null($CategoryContent) || $CategoryContent->getContent() == '') {
-            return;
-        }
-
-        // twigコードにカテゴリコンテンツを挿入
-        $snipet = '<div class="row">{{ CategoryContent.content | raw }}</div>';
-        $search = '<div id="result_info_box"';
-        $replace = $snipet.$search;
-        $source = str_replace($search, $replace, $event->getSource());
-        $event->setSource($source);
-
-        // twigパラメータにカテゴリコンテンツを追加
-        $parameters['CategoryContent'] = $CategoryContent;
-        $event->setParameters($parameters);
     }
 }
