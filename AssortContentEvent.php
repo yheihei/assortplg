@@ -519,6 +519,45 @@ class AssortContentEvent
             $snipet .= '</div>';   
         }
         
+        /* アソート選択エリアは下記のような内容
+        $snipet = '
+        <div class="assort_select_box">
+                        <p class="assort_label">アソート1</p>
+                        <select name="assort1" class="image-picker show-html">
+                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                        </select>
+                    </div>
+                    <div class="assort_select_box">
+                        <p class="assort_label">アソート2</p>
+                        <select name="assort2" class="image-picker show-html">
+                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                        </select>
+                    </div>
+                    <div class="assort_select_box">
+                        <p class="assort_label">アソート3</p>
+                        <select name="assort3" class="image-picker show-html">
+                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                        </select>
+                    </div>
+                    <div class="assort_select_box">
+                        <p class="assort_label">アソート4</p>
+                        <select name="assort4" class="image-picker show-html">
+                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                                    </select>
+                    </div>
+                    <div class="assort_select_box">
+                        <p class="assort_label">アソート5</p>
+                        <select name="assort5" class="image-picker show-html">
+                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                            </select>
+                    </div>
+                    <div class="assort_select_box">
+                        <p class="assort_label">アソート6</p>
+                        <select name="assort6" class="image-picker show-html">
+                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                            </select>
+                    </div>';
+        */
         $search = '<p id="detail_description_box__item_range_code"';
         $replace = $snipet.$search;
         //$search = '<form action="?" method="post" id="form1" name="form1">'; //カートのフォームの中に強引に入れ込む。
@@ -527,10 +566,119 @@ class AssortContentEvent
         $event->setSource($source);
         
         // twigパラメータにアソートコンテンツを追加
-        //$parameters['AssortContents'] = $AssortContents;
-        //$event->setParameters($parameters);
+        $parameters['AssortContents'] = $AssortContents;
+        $event->setParameters($parameters);
+    }
+    
+    public function onProductInit(EventArgs $event)
+    {
+        //dump('商品詳細画面！');
+        //dump($event);
+        /** @var Product $Product */
+        //$Product = $event->getArgument('Product');
+        //dump($event);
+        //$id = $Product->getId();
+
+        // フォームの追加
+        /** @var FormInterface $builder */
+        // FormBuildeの取得
+        /*
+        $builder = $event->getArgument('builder');
+        $builder->add(
+            'hoge',
+            'text',
+            array(
+                'label' => 'アソート1',
+                'required' => false,
+                'mapped' => false,
+                'attr' => array(
+                    'placeholder' => 'アソートの名前',
+                ),
+            )
+        );
+        */
+            
+    }
+    
+    public function onCartInitComplete(EventArgs $event)
+    {
+        //dump('カート画面！');
+        //dump($event);
+        /** @var FormInterface $form */
+        //dump($event);
+        /** @var Product $Product */
+        //$Product = $event->getArgument('Product');
+        //dump($event);
+        //$id = $Product->getId();
+            
+    }
+    
+    //カートに追加時のpostパラメータの確認
+    public function onHoge(EventArgs $event)
+    {
+        dump('onhoge');
+        dump($event);
+        dump($event->getRequest()->get('hoge'));
+        /** @var FormInterface $form */
+        //dump($event);
+        /** @var Product $Product */
+        //$Product = $event->getArgument('Product');
+        //dump($event);
+        //$id = $Product->getId();
+            
+    }
+    
+    /**
+     * カート画面にアソート情報を表示する.
+     *
+     * @param TemplateEvent $event
+     */
+    public function onRenderCartIndex(TemplateEvent $event)
+    {
+        //dump('カート画面レイアウト!twig表示！');
+        /** @var Application $app */
+        $app = $this->app;
+        $parameters = $event->getParameters();
+        
+        //dump($parameters);
+        //$Product = $parameters["Product"];
+    }
+    
+     /**
+     * レジ画面にアソート情報を表示する.
+     *
+     * @param TemplateEvent $event
+     */
+    public function onRenderShoppingInit(TemplateEvent $event)
+    {
+        dump('レジ画面表示！');
+        /** @var Application $app */
+        $app = $this->app;
+        $parameters = $event->getParameters();
+        
+        dump($parameters);
+        //$Product = $parameters["Product"];
+        /*
+        foreach($parameters["AssortCartItems"] as $Item) {
+            // Assortの商品があるかチェック
+            if(!is_null($Item->getAssort1())) {
+                // Assortの商品があればその表示箇所にアソート情報を追記する
+                $id = $Item->getObject()->getProduct()->getId();
+                $name = $Item->getObject()->getProduct()->getName();
+                dump($id);
+                dump($name);
+                $snipet = '<br>'. $Item->getAssort1();
+                $search = '[商品id:{{ orderDetail.Product.id }}] {{ orderDetail.productName }}';
+                $replace = $search.$snipet;
+
+                $source = str_replace($search, $replace, $event->getSource());
+                $event->setSource($source);
+            }
+        }
+        dump($event->getSource($source));
+        */
         
         
-        
+        /* [商品id:xx] 商品名*/
     }
 }
