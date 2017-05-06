@@ -583,21 +583,43 @@ class AssortContentEvent
         // フォームの追加
         /** @var FormInterface $builder */
         // FormBuildeの取得
-        /*
         $builder = $event->getArgument('builder');
-        $builder->add(
-            'hoge',
-            'text',
+        $builder
+        ->add('assort1','hidden',
             array(
-                'label' => 'アソート1',
-                'required' => false,
-                'mapped' => false,
-                'attr' => array(
-                    'placeholder' => 'アソートの名前',
-                ),
+                'data' => null,
+            )
+        )
+        ->add('assort2','hidden',
+            array(
+                'data' => null,
+            )
+        )
+        ->add('assort3','hidden',
+            array(
+                'data' => null,
+            )
+        )
+        ->add('assort4','hidden',
+            array(
+                'data' => null,
+            )
+        )
+        ->add('assort5','hidden',
+            array(
+                'data' => null,
+            )
+        )
+        ->add('assort6','hidden',
+            array(
+                'data' => null,
+            )
+        )
+        ->add('assort_img','hidden',
+            array(
+                'data' => null,
             )
         );
-        */
             
     }
     
@@ -617,9 +639,9 @@ class AssortContentEvent
     //カートに追加時のpostパラメータの確認
     public function onHoge(EventArgs $event)
     {
-        dump('onhoge');
-        dump($event);
-        dump($event->getRequest()->get('hoge'));
+        //dump('onhoge');
+        //dump($event);
+        //dump($event->getRequest()->get('hoge'));
         /** @var FormInterface $form */
         //dump($event);
         /** @var Product $Product */
@@ -641,7 +663,7 @@ class AssortContentEvent
         $app = $this->app;
         $parameters = $event->getParameters();
         
-        dump($parameters);
+        //dump($parameters);
         //$Product = $parameters["Product"];
     }
     
@@ -652,12 +674,12 @@ class AssortContentEvent
      */
     public function onRenderShoppingInit(TemplateEvent $event)
     {
-        dump('レジ画面表示！');
+        //dump('レジ画面表示！');
         /** @var Application $app */
         $app = $this->app;
         $parameters = $event->getParameters();
         
-        dump($parameters);
+        //dump($parameters);
         //$Product = $parameters["Product"];
         /*
         foreach($parameters["AssortCartItems"] as $Item) {
