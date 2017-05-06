@@ -12,8 +12,8 @@ front.product.detail.complete:
 Product/detail.twig:
     - [onRenderProductDetail, NORMAL]
 # front cart page event
-#Cart/index.twig:
-#    - [onRenderCartIndex, NORMAL]
+Cart/index.twig:
+    - [onRenderCartIndex, NORMAL]
 # front shopping page twig
 Shopping/index.twig:
     - [onRenderShoppingInit, NORMAL]

@@ -472,7 +472,7 @@ class AssortContentEvent
         //dump($source);
         $event->setSource($source);
         
-        // twigコードにアソート選択のjavascriptを挿入
+        // twigコードにアソート選択/商品キャプチャのjavascriptを挿入
         $snipet = null;
         $snipet = '{% block plg_assort_javascript %}
             <script src="/eccube/html/plugin/AssortContent/assets/js/image-picker.js" type="text/javascript"></script>
@@ -485,6 +485,7 @@ class AssortContentEvent
                 });
             </script>
             <script src="/eccube/html/plugin/AssortContent/assets/js/sync-image.js" type="text/javascript"></script>
+            <script src="/eccube/html/plugin/AssortContent/assets/js/html2canvas.js"></script>
             {% endblock %}';
         $search = '<p id="detail_description_box__item_range_code"';
         $replace = $snipet.$search;
@@ -558,16 +559,16 @@ class AssortContentEvent
                             </select>
                     </div>';
         */
+        
         $search = '<p id="detail_description_box__item_range_code"';
         $replace = $snipet.$search;
-        //$search = '<form action="?" method="post" id="form1" name="form1">'; //カートのフォームの中に強引に入れ込む。
-        //$replace = $search.$snipet;
         $source = str_replace($search, $replace, $event->getSource());
         $event->setSource($source);
         
         // twigパラメータにアソートコンテンツを追加
         $parameters['AssortContents'] = $AssortContents;
         $event->setParameters($parameters);
+        //dump($parameters);
     }
     
     public function onProductInit(EventArgs $event)
@@ -640,7 +641,7 @@ class AssortContentEvent
         $app = $this->app;
         $parameters = $event->getParameters();
         
-        //dump($parameters);
+        dump($parameters);
         //$Product = $parameters["Product"];
     }
     
