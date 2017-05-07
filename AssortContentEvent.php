@@ -819,21 +819,6 @@ class AssortContentEvent
             
     }
     
-    //カートに追加時のpostパラメータの確認
-    public function onHoge(EventArgs $event)
-    {
-        //dump('onhoge');
-        //dump($event);
-        //dump($event->getRequest()->get('hoge'));
-        /** @var FormInterface $form */
-        //dump($event);
-        /** @var Product $Product */
-        //$Product = $event->getArgument('Product');
-        //dump($event);
-        //$id = $Product->getId();
-            
-    }
-    
     /**
      * カート画面にアソート情報を表示する.
      *

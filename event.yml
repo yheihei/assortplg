@@ -8,8 +8,6 @@ front.product.detail.initialize:
     - [onProductInit, NORMAL]
 front.cart.index.complete:
     - [onCartInitComplete, NORMAL]
-front.product.detail.complete:
-    - [onHoge, NORMAL]
 # front product page event
 Product/detail.twig:
     - [onRenderProductDetail, NORMAL]
