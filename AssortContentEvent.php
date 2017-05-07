@@ -604,8 +604,8 @@ class AssortContentEvent
         $snipet = null;
         $snipet .= '{% block stylesheet %}
         <!-- for plg_assort theme Plugin-->
-<link rel="stylesheet" href="/eccube/html/plugin/AssortContent/assets/js/image-picker.css">
-<link rel="stylesheet" href="/eccube/html/plugin/AssortContent/assets/css/style.css">
+<link rel="stylesheet" href="{{ app.config.root }}plugin/AssortContent/assets/js/image-picker.css">
+<link rel="stylesheet" href="{{ app.config.root }}plugin/AssortContent/assets/css/style.css">
 {% endblock %}
 ';
         //$snipet = $app['twig']->getLoader()->getSource('AssortContent/Resource/template/css.twig');
@@ -619,17 +619,17 @@ class AssortContentEvent
         /* 下記のような形式
         $snipet = '<div id="selected_assort_image">'
                     . '<div id="assort1" style="background-image:url('
-                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . "'{{ app.config.root }}upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
                     . '<div id="assort2" style="background-image:url('
-                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . "'{{ app.config.root }}upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
                     . '<div id="assort3" style="background-image:url('
-                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . "'{{ app.config.root }}upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
                     . '<div id="assort4" style="background-image:url('
-                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . "'{{ app.config.root }}upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
                     . '<div id="assort5" style="background-image:url('
-                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . "'{{ app.config.root }}upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
                     . '<div id="assort6" style="background-image:url('
-                    . "'/eccube/html/upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
+                    . "'{{ app.config.root }}upload/save_image/craft.png');". ' background-size: contain;' . ' "></div>'
                     .'</div>';
         */
         $snipet = '<div id="selected_assort_image">';
@@ -668,7 +668,7 @@ class AssortContentEvent
         // twigコードにアソート選択/商品キャプチャのjavascriptを挿入
         $snipet = null;
         $snipet = '{% block plg_assort_javascript %}
-            <script src="/eccube/html/plugin/AssortContent/assets/js/image-picker.js" type="text/javascript"></script>
+            <script src="{{ app.config.root }}plugin/AssortContent/assets/js/image-picker.js" type="text/javascript"></script>
             <script>
                 $(document).ready(function () {
                     $(';
@@ -677,9 +677,9 @@ class AssortContentEvent
                     });
                 });
             </script>
-            <script src="/eccube/html/plugin/AssortContent/assets/js/sync-image.js" type="text/javascript"></script>
-            <script src="/eccube/html/plugin/AssortContent/assets/js/html2canvas.js"></script>
-            <script src="/eccube/html/plugin/AssortContent/assets/js/show-assort.js"></script>
+            <script src="{{ app.config.root }}plugin/AssortContent/assets/js/sync-image.js" type="text/javascript"></script>
+            <script src="{{ app.config.root }}plugin/AssortContent/assets/js/html2canvas.js"></script>
+            <script src="{{ app.config.root }}plugin/AssortContent/assets/js/show-assort.js"></script>
             {% endblock %}';
         $search = '<p id="detail_description_box__item_range_code"';
         $replace = $snipet.$search;
@@ -723,37 +723,37 @@ class AssortContentEvent
         <div class="assort_select_box">
                         <p class="assort_label">アソート1</p>
                         <select name="assort1" class="image-picker show-html">
-                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                            <option data-img-src="{{ app.config.root }}upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
                         </select>
                     </div>
                     <div class="assort_select_box">
                         <p class="assort_label">アソート2</p>
                         <select name="assort2" class="image-picker show-html">
-                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                            <option data-img-src="{{ app.config.root }}upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
                         </select>
                     </div>
                     <div class="assort_select_box">
                         <p class="assort_label">アソート3</p>
                         <select name="assort3" class="image-picker show-html">
-                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                            <option data-img-src="{{ app.config.root }}upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
                         </select>
                     </div>
                     <div class="assort_select_box">
                         <p class="assort_label">アソート4</p>
                         <select name="assort4" class="image-picker show-html">
-                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                            <option data-img-src="{{ app.config.root }}upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
                                     </select>
                     </div>
                     <div class="assort_select_box">
                         <p class="assort_label">アソート5</p>
                         <select name="assort5" class="image-picker show-html">
-                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                            <option data-img-src="{{ app.config.root }}upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
                             </select>
                     </div>
                     <div class="assort_select_box">
                         <p class="assort_label">アソート6</p>
                         <select name="assort6" class="image-picker show-html">
-                            <option data-img-src="/eccube/html/upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
+                            <option data-img-src="{{ app.config.root }}upload/save_image/craft.png" data-img-class="first" data-img-alt="クラフト" value="craft"">クラフト</option>
                             </select>
                     </div>';
         */
