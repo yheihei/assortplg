@@ -1,13 +1,28 @@
+.assort_select_box {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 .assort_select_box p.assort_label {
   margin-top: 10px;
+}
+.assort_select_box p.assort_label:before {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: 4px;
+  margin-left: 4px;
+  border: transparent solid 5px;
+  border-left-color: #DE5D50;
+  vertical-align: 1px;
 }
 .assort_select_box ul.thumbnails.image_picker_selector li {
   margin: 0px 0px 0px 0px;
   float: left;
 }
 .assort_select_box .image_picker_image {
-  max-width: 40px;
-  max-height: 40px;
+  max-width: 32px;
+  max-height: 32px;
   background-color: transparent;
 }
 .assort_select_box ul.thumbnails.image_picker_selector li .thumbnail.selected {
@@ -29,7 +44,7 @@
   margin: 0 auto;
   width: 200px;
   height: 100%;
-  padding: 120px 0 0 0;
+  padding: 136px 0 0 0;
   overflow: hidden;
   *zoom: 1;
 }
