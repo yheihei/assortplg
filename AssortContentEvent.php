@@ -423,7 +423,7 @@ class AssortContentEvent
         for($i = 1; $i < self::ASSORT_COUNT + 1; $i++) {
             $assort = new Assort();
             $assort->name = $form[self::ASSORT_CONTENT_PREFIX . 'name' . $i]->getData();
-            if($assort->name === null) continue;
+            //if($assort->name === null) continue;
             $assort->image = $form[self::ASSORT_CONTENT_PREFIX . 'image' . $i]->getData();
             //dump($assort);
             $update_assorts[] = $assort;
@@ -461,7 +461,7 @@ class AssortContentEvent
         for ($i = 0; $i < count($AssortProductContents); $i++) {
             $AssortContents[] = $AssortProductContents[$i]->getAssortContent();
         }
-       //dump($AssortContents);
+        //dump($AssortContents);
         
         $currentCount = count($AssortContents);
        //dump($currentCount);
@@ -586,8 +586,16 @@ class AssortContentEvent
         
         //dump($AssortContents);
         
-         // アソートが未登録の場合 アソートのデータを追加せずreturn
-        if (empty($AssortContents)) {
+        // 有効なアソートを取得する
+        $validAssorts = null;
+        foreach($AssortContents as $Assort) {
+            if($Assort->getName() != null) {
+                $validAssorts[] = $Assort;
+            }
+        }
+        
+        // 有効なアソートが一つもない場合 アソートのデータを追加せずreturn
+        if(empty($validAssorts)) {
             return;
         }
         
@@ -624,7 +632,7 @@ class AssortContentEvent
                     .'</div>';
         */
         $snipet = '<div id="selected_assort_image">';
-        // デフォルトは一つ目のアソートを全て選択して表示
+        // デフォルトは一つ目の有効なアソートを全て選択して表示
         for($i = 0; $i < self::ASSORT_DISPLAY_COUNT; $i++) {
             /*
             $snipet .= '<div id="assort' . $i+1 . '" style="background-image:url('
@@ -637,8 +645,13 @@ class AssortContentEvent
             $snipet .= '<div id="assort';
             $snipet .= $i+1;
             $snipet .= '" style="background-image:url(';
-            $snipet .= "'{{ app.config.image_save_urlpath }}/";
-            $snipet .= $AssortContents[0]->getImageFileName();
+            foreach($validAssorts as $Assort) {
+                if($Assort->getName() != null) {
+                    $snipet .= "'{{ app.config.image_save_urlpath }}/";
+                    $snipet .= $Assort->getImageFileName();
+                    break;
+                }
+            }
             $snipet .= "');";
             $snipet .= ' background-size: contain;';
             $snipet .= ' "></div>';
@@ -674,6 +687,7 @@ class AssortContentEvent
         
         // twigコードにアソート選択エリアを挿入
         $snipet = null;
+        
         for($i = 0; $i < self::ASSORT_DISPLAY_COUNT; $i++) {
             $snipet .= '<div class="assort_select_box ';
             $snipet .= 'id_';
@@ -687,7 +701,7 @@ class AssortContentEvent
             $snipet .= '" id="assort';
             $snipet .= $i+1;
             $snipet .= '" class="image-picker show-html">';
-            foreach ($AssortContents as $AssortContent) {
+            foreach ($validAssorts as $AssortContent) {
                 $snipet .= '<option data-img-src="{{ app.config.image_save_urlpath }}/';
                 $snipet .= $AssortContent->getImageFileName();
                 $snipet .= '" data-img-class="first" data-img-alt="';
@@ -749,7 +763,7 @@ class AssortContentEvent
         $event->setSource($source);
         
         // twigパラメータにアソートコンテンツを追加
-        $parameters['AssortContents'] = $AssortContents;
+        $parameters['AssortContents'] = $validAssorts;
         $event->setParameters($parameters);
         //dump($parameters);
     }
@@ -759,9 +773,17 @@ class AssortContentEvent
         //dump('商品詳細画面！');
         //dump($event);
         /** @var Product $Product */
-        //$Product = $event->getArgument('Product');
+        $Product = $event->getArgument('Product');
         //dump($event);
         //$id = $Product->getId();
+        //タグに「セット商品」が設定されているか確認
+        $isAssortTag = false;
+        $tag = $Product->getProductTag();
+        foreach ($tag as $k => $val){
+            if ($val->getTag() == self::ASSORT_ENABLE_TAG ) $isAssortTag = true;
+        }
+        //タグに「セット商品」が設定されてなければAssort機能は使わない
+        if(!$isAssortTag) return;
 
         // フォームの追加
         /** @var FormInterface $builder */
