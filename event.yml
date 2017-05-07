@@ -2,6 +2,8 @@ admin.product.edit.initialize:
     - [onAdminProductInit, NORMAL]
 admin.product.edit.complete:
     - [onAdminProductEditComplete, NORMAL]
+Admin/Product/product.twig:
+    - [onRenderAdminProductDetail, NORMAL]
 front.product.detail.initialize:
     - [onProductInit, NORMAL]
 front.cart.index.complete:

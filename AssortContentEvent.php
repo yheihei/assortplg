@@ -521,6 +521,23 @@ class AssortContentEvent
         }
 
     }
+
+    /**
+     * 商品登録画面にアソートの注意書きを表示する.
+     *
+     * @param TemplateEvent $event
+     */
+    public function onRenderAdminProductDetail(TemplateEvent $event)
+    {
+        //dump($event->getSource());
+        
+        $snipet = '<p class="assort_note" style="color: red">アソート機能を有効にするにはタグに「' . self::ASSORT_ENABLE_TAG . '」を指定してください</p>';
+        $search = '<div class="extra-form">';
+        $replace = $snipet.$search;
+        $source = str_replace($search, $replace, $event->getSource());
+        //dump($source);
+        $event->setSource($source);
+    }
     
     /**
      * 商品画面にアソート画像を表示する.
