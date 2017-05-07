@@ -25,7 +25,10 @@ class AssortContentEvent
      */
      
     const ASSORT_CONTENT_PREFIX = 'plg_assort_';
-    const ASSORT_COUNT = 6;
+    const ASSORT_COUNT = 12;        //アソートの種類数の上限
+    const ASSORT_DISPLAY_COUNT = 6; //設定できるアソートの数
+    
+    const ASSORT_ENABLE_TAG = 'セット商品';
     
     const ASSORT_CONTENT_AREA_NAME1 = 'plg_assort_name1';
     const ASSORT_IMAGE_AREA_NAME1 = 'plg_assort_image1';
@@ -44,6 +47,24 @@ class AssortContentEvent
     
     const ASSORT_CONTENT_AREA_NAME6 = 'plg_assort_name6';
     const ASSORT_IMAGE_AREA_NAME6 = 'plg_assort_image6';
+    
+    const ASSORT_CONTENT_AREA_NAME7 = 'plg_assort_name7';
+    const ASSORT_IMAGE_AREA_NAME7 = 'plg_assort_image7';
+    
+    const ASSORT_CONTENT_AREA_NAME8 = 'plg_assort_name8';
+    const ASSORT_IMAGE_AREA_NAME8 = 'plg_assort_image8';
+    
+    const ASSORT_CONTENT_AREA_NAME9 = 'plg_assort_name9';
+    const ASSORT_IMAGE_AREA_NAME9 = 'plg_assort_image9';
+    
+    const ASSORT_CONTENT_AREA_NAME10 = 'plg_assort_name10';
+    const ASSORT_IMAGE_AREA_NAME10 = 'plg_assort_image10';
+    
+    const ASSORT_CONTENT_AREA_NAME11 = 'plg_assort_name11';
+    const ASSORT_IMAGE_AREA_NAME11 = 'plg_assort_image11';
+    
+    const ASSORT_CONTENT_AREA_NAME12 = 'plg_assort_name12';
+    const ASSORT_IMAGE_AREA_NAME12 = 'plg_assort_image12';
     
     /** @var \Eccube\Application $app */
     private $app;
@@ -224,6 +245,138 @@ class AssortContentEvent
                 'mapped' => false,
             )
         )
+        ->add(
+            self::ASSORT_CONTENT_AREA_NAME7,
+            'text',
+            array(
+                'label' => 'アソート名7',
+                'required' => false,
+                'mapped' => false,
+                'attr' => array(
+                    'placeholder' => 'アソートの名前',
+                ),
+            )
+        )
+        ->add(
+            self::ASSORT_IMAGE_AREA_NAME7,
+            'file',
+            array(
+                'label' => 'アソート画像7',
+                'multiple' => true,
+                'required' => false,
+                'mapped' => false,
+            )
+        )
+        ->add(
+            self::ASSORT_CONTENT_AREA_NAME8,
+            'text',
+            array(
+                'label' => 'アソート名8',
+                'required' => false,
+                'mapped' => false,
+                'attr' => array(
+                    'placeholder' => 'アソートの名前',
+                ),
+            )
+        )
+        ->add(
+            self::ASSORT_IMAGE_AREA_NAME8,
+            'file',
+            array(
+                'label' => 'アソート画像8',
+                'multiple' => true,
+                'required' => false,
+                'mapped' => false,
+            )
+        )
+        ->add(
+            self::ASSORT_CONTENT_AREA_NAME9,
+            'text',
+            array(
+                'label' => 'アソート名9',
+                'required' => false,
+                'mapped' => false,
+                'attr' => array(
+                    'placeholder' => 'アソートの名前',
+                ),
+            )
+        )
+        ->add(
+            self::ASSORT_IMAGE_AREA_NAME9,
+            'file',
+            array(
+                'label' => 'アソート画像9',
+                'multiple' => true,
+                'required' => false,
+                'mapped' => false,
+            )
+        )
+        ->add(
+            self::ASSORT_CONTENT_AREA_NAME10,
+            'text',
+            array(
+                'label' => 'アソート名10',
+                'required' => false,
+                'mapped' => false,
+                'attr' => array(
+                    'placeholder' => 'アソートの名前',
+                ),
+            )
+        )
+        ->add(
+            self::ASSORT_IMAGE_AREA_NAME10,
+            'file',
+            array(
+                'label' => 'アソート画像10',
+                'multiple' => true,
+                'required' => false,
+                'mapped' => false,
+            )
+        )
+        ->add(
+            self::ASSORT_CONTENT_AREA_NAME11,
+            'text',
+            array(
+                'label' => 'アソート名11',
+                'required' => false,
+                'mapped' => false,
+                'attr' => array(
+                    'placeholder' => 'アソートの名前',
+                ),
+            )
+        )
+        ->add(
+            self::ASSORT_IMAGE_AREA_NAME11,
+            'file',
+            array(
+                'label' => 'アソート画像11',
+                'multiple' => true,
+                'required' => false,
+                'mapped' => false,
+            )
+        )
+        ->add(
+            self::ASSORT_CONTENT_AREA_NAME12,
+            'text',
+            array(
+                'label' => 'アソート名12',
+                'required' => false,
+                'mapped' => false,
+                'attr' => array(
+                    'placeholder' => 'アソートの名前',
+                ),
+            )
+        )
+        ->add(
+            self::ASSORT_IMAGE_AREA_NAME12,
+            'file',
+            array(
+                'label' => 'アソート画像12',
+                'multiple' => true,
+                'required' => false,
+                'mapped' => false,
+            )
+        )
         ;
 
         // 初期値を設定
@@ -384,6 +537,15 @@ class AssortContentEvent
         //dump($parameters);
         $Product = $parameters["Product"];
         //dump($Product);
+
+        //タグに「セット商品」が設定されているか確認
+        $isAssortTag = false;
+        $tag = $Product->getProductTag();
+        foreach ($tag as $k => $val){
+            if ($val->getTag() == self::ASSORT_ENABLE_TAG ) $isAssortTag = true;
+        }
+        //タグに「セット商品」が設定されてなければAssort機能は使わない
+        if(!$isAssortTag) return;
         
         $id = $Product->getId();
         //dump($id);
@@ -412,7 +574,7 @@ class AssortContentEvent
             return;
         }
         
-        // twigコードにcssを挿入
+        // twigコードにAssort機能に必要なcssを挿入
         $snipet = null;
         $snipet .= '{% block stylesheet %}
         <!-- for plg_assort theme Plugin-->
@@ -446,7 +608,7 @@ class AssortContentEvent
         */
         $snipet = '<div id="selected_assort_image">';
         // デフォルトは一つ目のアソートを全て選択して表示
-        for($i = 0; $i < self::ASSORT_COUNT; $i++) {
+        for($i = 0; $i < self::ASSORT_DISPLAY_COUNT; $i++) {
             /*
             $snipet .= '<div id="assort' . $i+1 . '" style="background-image:url('
                     . "'{{ app.config.image_save_urlpath }}/"
@@ -486,6 +648,7 @@ class AssortContentEvent
             </script>
             <script src="/eccube/html/plugin/AssortContent/assets/js/sync-image.js" type="text/javascript"></script>
             <script src="/eccube/html/plugin/AssortContent/assets/js/html2canvas.js"></script>
+            <script src="/eccube/html/plugin/AssortContent/assets/js/show-assort.js"></script>
             {% endblock %}';
         $search = '<p id="detail_description_box__item_range_code"';
         $replace = $snipet.$search;
@@ -494,8 +657,11 @@ class AssortContentEvent
         
         // twigコードにアソート選択エリアを挿入
         $snipet = null;
-        for($i = 0; $i < self::ASSORT_COUNT; $i++) {
-            $snipet .= '<div class="assort_select_box">';
+        for($i = 0; $i < self::ASSORT_DISPLAY_COUNT; $i++) {
+            $snipet .= '<div class="assort_select_box ';
+            $snipet .= 'id_';
+            $snipet .= $i+1;
+            $snipet .= ' ">';
             $snipet .= '<p class="assort_label">アソート';
             $snipet .= $i+1;
             $snipet .= '</p>';
