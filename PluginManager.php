@@ -86,6 +86,17 @@ class PluginManager extends AbstractPluginManager
         $file = new Filesystem();
         $file->remove($app['config']['plugin_html_realdir'].$this->target);
     }
+    
+    /**
+     * プラグインフォルダを削除
+     *
+     * @param Application $app
+     */
+    private function removePlugin(Application $app)
+    {
+        $file = new Filesystem();
+        $file->remove(__DIR__);
+    }
 
     // インストール時にマイグレーションの「up」メソッドを実行します
     public function install($config, $app)
@@ -105,6 +116,8 @@ class PluginManager extends AbstractPluginManager
         $this->removeAssets($app);
         //プラグインで使用するコアファイルをプラグイン有効化前に戻す
         $this->doRevertCore($app);
+        //プラグインフォルダを削除する
+        $this->removePlugin($app);
     }
 
     // プラグイン有効時に、指定の処理 (ファイルのコピーなど) を実行できます。
