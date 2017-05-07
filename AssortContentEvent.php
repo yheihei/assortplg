@@ -532,6 +532,7 @@ class AssortContentEvent
         //dump($event->getSource());
         
         $snipet = '<p class="assort_note" style="color: red">アソート機能を有効にするにはタグに「' . self::ASSORT_ENABLE_TAG . '」を指定してください</p>';
+        $snipet .= '<p class="assort_note2" style="color: red">アソート名を空欄にするとそのアソートは削除されます</p>';
         $search = '<div class="extra-form">';
         $replace = $snipet.$search;
         $source = str_replace($search, $replace, $event->getSource());

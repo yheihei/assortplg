@@ -56,7 +56,7 @@
   padding: 136px 0 0 0;
   img {
     //margin: 0 auto;
-    @include transition(background-image 0.3s ease-out);
+    @include transition(background-image 0.2s ease-out);
     margin-bottom: 5px;
     max-width: 80px;
   }
@@ -64,7 +64,7 @@
     width: 80px;
     height: 80px;
     margin-bottom: 5px;
-    @include transition(background-image 0.3s ease-out);
+    @include transition(background-image 0.2s ease-out);
     margin-left: 13px;
     float: left;
   }
